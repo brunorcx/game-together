@@ -1,0 +1,200 @@
+.gamePage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  color: #333;
+
+  .heroSection {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .gameCover {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+
+    .coverImage {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .coverPlaceholder {
+      background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+      aspect-ratio: 3/4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .placeholderIcon {
+        color: white;
+        font-size: 3rem;
+      }
+    }
+  }
+
+  .gameInfo {
+    .gameHeader {
+      margin-bottom: 1.5rem;
+
+      h1 {
+        font-size: 2.2rem;
+        margin: 0 0 0.5rem 0;
+        color: whitesmoke;
+      }
+    }
+
+    .platformGenre {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.9rem;
+
+      .platform {
+        background-color: #e0f7fa;
+        color: #00838f;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+      }
+
+      .genre {
+        background-color: #f3e5f5;
+        color: #6a1b9a;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+      }
+    }
+
+    .dateRange {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1.5rem 0;
+      color: #e74c3c;
+      font-weight: 500;
+
+      .icon {
+        font-size: 1.1rem;
+      }
+    }
+
+    .statsContainer {
+      display: flex;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+
+      .statItem {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        background-color: #f8f9fa;
+        padding: 0.8rem 1.2rem;
+        border-radius: 8px;
+
+        .icon {
+          font-size: 1.5rem;
+          color: #3498db;
+        }
+
+        .statValue {
+          font-size: 1.2rem;
+          font-weight: bold;
+          display: block;
+        }
+
+        .statLabel {
+          font-size: 0.8rem;
+          color: #7f8c8d;
+          display: block;
+        }
+      }
+    }
+
+    .description {
+      line-height: 1.6;
+      color: #34495e;
+      margin: 2rem 0;
+    }
+
+    .actionButtons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+
+      button {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .primaryButton {
+        background-color: #3498db;
+        color: white;
+
+        &:hover {
+          background-color: #2980b9;
+        }
+      }
+
+      .secondaryButton {
+        background-color: white;
+        color: #3498db;
+        border: 1px solid #3498db;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+    }
+  }
+
+  .communitySection {
+    margin-top: 3rem;
+    border-top: 1px solid #ecf0f1;
+    padding-top: 2rem;
+
+    h2 {
+      font-size: 1.5rem;
+      color: whitesmoke;
+      margin-bottom: 1.5rem;
+    }
+
+    .activityGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+
+      .activityCard {
+        background-color: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: translateY(-5px);
+        }
+
+        h3 {
+          color: #3498db;
+          margin-top: 0;
+        }
+
+        p {
+          color: #7f8c8d;
+        }
+      }
+    }
+  }
+}
