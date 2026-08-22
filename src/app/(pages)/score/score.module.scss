@@ -101,3 +101,15 @@
   color: #00c851;
   text-align: center;
 }
+
+.errorMessage {
+  color: #ff4444;
+  text-align: center;
+}
+
+.currentPath {
+  color: var(--muted-text);
+  font-size: 13px;
+  text-align: center;
+  word-break: break-all;
+}

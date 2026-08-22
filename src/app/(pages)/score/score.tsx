@@ -2,13 +2,27 @@
 
 import React, { useState } from "react";
 import styles from "./score.module.scss";
-import { PlayedGame } from "@/app/interfaces/game.interface";
-import { addPlayedGame } from "@/app/lib/mongodb";
 
-const initialForm: PlayedGame = {
+interface ScoreForm {
+  name: string;
+  genre: string;
+  date: string;
+  duration: number;
+  graphics: number;
+  soundtrack: number;
+  replayability: number;
+  notes: string;
+  flaws: string;
+  suggestions: string;
+  difficulty: number;
+  ranking: string;
+  platform: string;
+}
+
+const initialForm: ScoreForm = {
   name: "",
-  genre: [""],
-  date: new Date(),
+  genre: "",
+  date: new Date().toISOString().split("T")[0],
   duration: 0,
   graphics: 0,
   soundtrack: 0,
@@ -21,31 +35,76 @@ const initialForm: PlayedGame = {
   platform: "",
 };
 
-export default function Score() {
-  const [form, setForm] = useState<PlayedGame>(initialForm);
+const NEW_PLATFORM_OPTION = "__new__";
+
+interface ScoreProps {
+  initialFilePath: string | null;
+  initialPlatforms: string[];
+}
+
+export default function Score({ initialFilePath, initialPlatforms }: ScoreProps) {
+  const [form, setForm] = useState<ScoreForm>(initialForm);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const fetchImage = async (gameName: string) => {
-    if (!gameName) return;
+  const [filePath, setFilePath] = useState<string | null>(initialFilePath);
+  const [pathInput, setPathInput] = useState(initialFilePath || "");
+  const [savingPath, setSavingPath] = useState(false);
+  const [pathMessage, setPathMessage] = useState<{ text: string; isError: boolean } | null>(null);
+
+  const [platforms, setPlatforms] = useState<string[]>(initialPlatforms);
+  const [platformMode, setPlatformMode] = useState<"select" | "new">(initialPlatforms.length ? "select" : "new");
+
+  const refreshPlatforms = async () => {
     try {
-      const res = await fetch(`https://retroachievements.org/API/API_GetGameList.php?z=demo&y=demo`);
+      const res = await fetch("/api/platforms");
+      const data = await res.json();
+      if (data.success) setPlatforms(data.platforms);
+    } catch {
+      // keep previous list on failure
+    }
+  };
+
+  const handleSavePath = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingPath(true);
+    setPathMessage(null);
+
+    try {
+      const res = await fetch("/api/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filePath: pathInput }),
+      });
       const data = await res.json();
 
-      const game = data.find((g: any) => g.Title.toLowerCase().includes(gameName.toLowerCase()));
-
-      if (game?.ImageIcon) {
-        setForm((prev) => ({ ...prev, imageUrl: game.ImageIcon }));
+      if (res.ok && data.success) {
+        setFilePath(pathInput);
+        setPathMessage({ text: "Arquivo configurado com sucesso!", isError: false });
+        await refreshPlatforms();
+      } else {
+        setPathMessage({ text: data.error || "Erro ao salvar o caminho.", isError: true });
       }
     } catch {
-      setForm((prev) => ({ ...prev, imageUrl: "" }));
+      setPathMessage({ text: "Erro ao salvar o caminho.", isError: true });
     }
+
+    setSavingPath(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    if (name === "nome") fetchImage(value);
+  };
+
+  const handlePlatformSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === NEW_PLATFORM_OPTION) {
+      setPlatformMode("new");
+      return;
+    }
+    setPlatformMode("select");
+    setForm((prev) => ({ ...prev, platform: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,6 +122,8 @@ export default function Score() {
       if (res.ok) {
         setSaved(true);
         setForm(initialForm);
+        setPlatformMode(platforms.length ? "select" : "new");
+        await refreshPlatforms();
       } else {
         console.error(await res.json());
       }
@@ -75,54 +136,102 @@ export default function Score() {
 
   return (
     <div className={styles.formContainer}>
+      <h2>Arquivo de Dados</h2>
+      <form onSubmit={handleSavePath} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label htmlFor="scoresPath">Caminho do .txt</label>
+          <input
+            id="scoresPath"
+            type="text"
+            value={pathInput}
+            onChange={(e) => setPathInput(e.target.value)}
+            placeholder="C:\Users\...\OneDrive\...\scores.txt"
+          />
+        </div>
+        <button type="submit" className={styles.button} disabled={savingPath || !pathInput}>
+          {savingPath ? "Salvando..." : "Salvar caminho"}
+        </button>
+        {pathMessage && <div className={pathMessage.isError ? styles.errorMessage : styles.successMessage}>{pathMessage.text}</div>}
+        {filePath && !pathMessage && <p className={styles.currentPath}>Arquivo atual: {filePath}</p>}
+      </form>
+
       <h2>Adicionar Jogo</h2>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        {[
-          { label: "Plataforma", name: "platform", type: "text" },
-          { label: "Nome", name: "name", type: "text" },
-          { label: "Gênero", name: "genre", type: "text" },
-          { label: "Data", name: "date", type: "date" },
-          { label: "Duração (horas)", name: "duration", type: "number" },
-          { label: "Gráfico", name: "graphics", type: "number" },
-          { label: "Trilha Sonora", name: "soundtrack", type: "number" },
-          { label: "Fator Replay", name: "replayability", type: "number" },
-          { label: "Dificuldade", name: "difficulty", type: "number" },
-        ].map((field) => (
-          <div key={field.name} className={styles.formGroup}>
-            <label htmlFor={field.name}>{field.label}</label>
-            <input id={field.name} name={field.name} type={field.type} value={(form as any)[field.name]} onChange={handleChange} required={field.name === "nome"} />
+      {!filePath ? (
+        <p>Configure o caminho do arquivo .txt acima antes de adicionar um jogo.</p>
+      ) : (
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="platform">Plataforma</label>
+            {platformMode === "select" ? (
+              <select id="platform" name="platform" value={form.platform} onChange={handlePlatformSelect} required>
+                <option value="" disabled>
+                  Selecione...
+                </option>
+                {platforms.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+                <option value={NEW_PLATFORM_OPTION}>+ Nova / editar plataforma</option>
+              </select>
+            ) : (
+              <div style={{ display: "flex", gap: 8, flex: 1 }}>
+                <input id="platform" name="platform" type="text" value={form.platform} onChange={handleChange} placeholder="Nome da plataforma" required />
+                {platforms.length > 0 && (
+                  <button type="button" className={styles.button} onClick={() => setPlatformMode("select")}>
+                    Usar lista
+                  </button>
+                )}
+              </div>
+            )}
           </div>
-        ))}
 
-        {[
-          { label: "Comentários", name: "notes" },
-          { label: "Defeitos", name: "flaws" },
-          { label: "Sugestões", name: "suggestions" },
-        ].map((field) => (
-          <div key={field.name} className={styles.formGroup}>
-            <label htmlFor={field.name}>{field.label}</label>
-            <textarea id={field.name} name={field.name} value={(form as any)[field.name]} onChange={handleChange} />
+          {[
+            { label: "Nome", name: "name", type: "text" },
+            { label: "Gênero", name: "genre", type: "text" },
+            { label: "Data", name: "date", type: "date" },
+            { label: "Duração (horas)", name: "duration", type: "number" },
+            { label: "Gráfico", name: "graphics", type: "number" },
+            { label: "Trilha Sonora", name: "soundtrack", type: "number" },
+            { label: "Fator Replay", name: "replayability", type: "number" },
+            { label: "Dificuldade", name: "difficulty", type: "number" },
+          ].map((field) => (
+            <div key={field.name} className={styles.formGroup}>
+              <label htmlFor={field.name}>{field.label}</label>
+              <input id={field.name} name={field.name} type={field.type} value={form[field.name as keyof ScoreForm]} onChange={handleChange} required={field.name === "name"} />
+            </div>
+          ))}
+
+          {[
+            { label: "Comentários", name: "notes" },
+            { label: "Defeitos", name: "flaws" },
+            { label: "Sugestões", name: "suggestions" },
+          ].map((field) => (
+            <div key={field.name} className={styles.formGroup}>
+              <label htmlFor={field.name}>{field.label}</label>
+              <textarea id={field.name} name={field.name} value={form[field.name as keyof ScoreForm]} onChange={handleChange} />
+            </div>
+          ))}
+
+          <div className={styles.formGroup}>
+            <label htmlFor="ranking">Ranking</label>
+            <select id="ranking" name="ranking" value={form.ranking} onChange={handleChange}>
+              <option value="1">Ruim</option>
+              <option value="2">Legalzinho</option>
+              <option value="3">Bom</option>
+              <option value="4">Muito Bom</option>
+              <option value="5">Beira a Perfeição</option>
+            </select>
           </div>
-        ))}
 
-        <div className={styles.formGroup}>
-          <label htmlFor="ranking">Ranking</label>
-          <select id="ranking" name="ranking" value={form.ranking} onChange={handleChange}>
-            <option value="1">Ruim</option>
-            <option value="2">Legalzinho</option>
-            <option value="3">Bom</option>
-            <option value="4">Muito Bom</option>
-            <option value="5">Beira a Perfeição</option>
-          </select>
-        </div>
+          <button type="submit" className={styles.button} disabled={loading}>
+            {loading ? "Salvando..." : "Salvar"}
+          </button>
 
-        <button type="submit" className={styles.button} disabled={loading}>
-          {loading ? "Salvando..." : "Salvar"}
-        </button>
-
-        {saved && <div className={styles.successMessage}>Salvo com sucesso!</div>}
-      </form>
+          {saved && <div className={styles.successMessage}>Salvo com sucesso!</div>}
+        </form>
+      )}
     </div>
   );
 }

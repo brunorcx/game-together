@@ -62,7 +62,7 @@ function CollapsibleCell({ text }: { text: string }) {
   );
 }
 
-export default function Played({ playedGameList }: { playedGameList: PlayedGame[] }) {
+export default function Played({ playedGameList, error }: { playedGameList: PlayedGame[]; error?: string | null }) {
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
@@ -73,6 +73,17 @@ export default function Played({ playedGameList }: { playedGameList: PlayedGame[
     });
     return sorted;
   }, [playedGameList, sortKey, sortDir]);
+
+  if (error) {
+    return (
+      <div className={styles.playedBg}>
+        <div className={styles.playedContainer}>
+          <h2 className={styles.playedTitle}>Jogos Zerados</h2>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {

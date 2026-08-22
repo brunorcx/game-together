@@ -2,7 +2,7 @@ import { fetchGame, fetchGameProgress } from "@/app/lib/retroachievements";
 import Game from "@/app/(pages)/game/game";
 
 export default async function GamePage() {
-  const gameOfTheMonthID = 11367; // Example game ID
+  const gameOfTheMonthID = 11300; // Example game ID
   const username = process.env.RA_USERNAME as string;
   const gameData = await fetchGame(gameOfTheMonthID);
   const gameProgress = await fetchGameProgress(username, gameOfTheMonthID); // Replace with actual username
