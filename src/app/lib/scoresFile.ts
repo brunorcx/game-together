@@ -1,5 +1,7 @@
 import fs from "fs";
 import { PlayedGame } from "../interfaces/game.interface";
+import { getBacklogFilePath } from "./backlogConfig";
+import { removeBacklogGameFromContent, type BacklogGameIdentity } from "./backlogFile";
 import { getScoresFilePath } from "./scoresConfig";
 
 type RawEntryTextField = Exclude<keyof RawEntry, "platform" | "isMod" | "jogoOriginal">;
@@ -313,4 +315,44 @@ export function addPlayedGame(game: PlayedGame): void {
   const content = readContent();
   const updated = insertGameIntoContent(content, game.platform, game);
   writeContent(updated);
+}
+
+export function addPlayedGameAndCompleteBacklog(game: PlayedGame, backlogGame: BacklogGameIdentity): void {
+  const scoresFilePath = getScoresFilePath();
+  const backlogFilePath = getBacklogFilePath();
+  if (!scoresFilePath) throw new Error("SCORES_PATH_NOT_SET");
+  if (!backlogFilePath) throw new Error("BACKLOG_PATH_NOT_SET");
+
+  const originalScores = fs.readFileSync(scoresFilePath, "utf-8");
+  const originalBacklog = fs.readFileSync(backlogFilePath, "utf-8");
+  const updatedScores = insertGameIntoContent(originalScores, game.platform, game);
+  const removal = removeBacklogGameFromContent(originalBacklog, backlogGame);
+  let scoresWritten = false;
+  let backlogWriteAttempted = false;
+
+  try {
+    fs.writeFileSync(scoresFilePath, updatedScores, "utf-8");
+    scoresWritten = true;
+    backlogWriteAttempted = true;
+    fs.writeFileSync(backlogFilePath, removal.content, "utf-8");
+  } catch (error) {
+    const rollbackErrors: string[] = [];
+    if (backlogWriteAttempted) {
+      try {
+        fs.writeFileSync(backlogFilePath, originalBacklog, "utf-8");
+      } catch (rollbackError) {
+        rollbackErrors.push(`Could not restore the backlog file: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`);
+      }
+    }
+    if (scoresWritten) {
+      try {
+        fs.writeFileSync(scoresFilePath, originalScores, "utf-8");
+      } catch (rollbackError) {
+        rollbackErrors.push(`Could not restore the scores file: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`);
+      }
+    }
+
+    const originalError = error instanceof Error ? error.message : String(error);
+    throw new Error([`Could not complete the game: ${originalError}`, ...rollbackErrors].join(" "));
+  }
 }

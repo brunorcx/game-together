@@ -13,7 +13,7 @@ export default function Header() {
         </div>
 
         <nav className={styles.nav}>
-          <Link href="/about">About</Link>
+          <Link href="/backlog">Backlog</Link>
           <Link href="/game">Game of the month</Link>
           <Link href="/score">Score</Link>
           <Link href="/played">Past Games</Link>

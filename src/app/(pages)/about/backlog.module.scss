@@ -1,0 +1,717 @@
+.page {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  color: #f4f6ff;
+  background:
+    radial-gradient(ellipse at 12% 0%, #3b4d8b55, transparent 38rem),
+    #10131d;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.hero,
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.hero {
+  margin-bottom: 2rem;
+
+  h1 {
+    margin: 0.2rem 0 0.6rem;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    letter-spacing: -0.045em;
+  }
+
+  p:not(.eyebrow) {
+    color: #aab2ca;
+  }
+}
+
+.eyebrow {
+  color: #96a9ff;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.primaryButton,
+.secondaryButton {
+  border: 0;
+  border-radius: 0.75rem;
+  padding: 0.8rem 1.1rem;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.primaryButton {
+  background: #596ff0;
+
+  &:hover:not(:disabled) {
+    background: #7184ff;
+  }
+}
+
+.secondaryButton {
+  background: #303950;
+
+  &:hover:not(:disabled) {
+    background: #3d4a69;
+  }
+}
+
+.filePanel,
+.listSection {
+  border: 1px solid #ffffff12;
+  border-radius: 1.2rem;
+  background: #191e2b;
+  box-shadow: 0 16px 40px #0002;
+}
+
+.filePanel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 2.5rem;
+
+  h2 {
+    margin-bottom: 0.35rem;
+    font-size: 1.05rem;
+  }
+
+  p {
+    color: #9ca6c0;
+    font-size: 0.9rem;
+  }
+}
+
+.pathForm {
+  display: flex;
+  gap: 0.7rem;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #ffffff20;
+    border-radius: 0.7rem;
+    padding: 0.8rem 0.9rem;
+    color: #f4f6ff;
+    background: #10141f;
+  }
+}
+
+.currentPath {
+  overflow-wrap: anywhere;
+}
+
+.sectionHeading {
+  margin-bottom: 1.4rem;
+
+  h2 {
+    margin-top: 0.25rem;
+    font-size: 1.7rem;
+  }
+}
+
+.count {
+  color: #aab2ca;
+  font-size: 0.9rem;
+}
+
+.listSection {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.systemList {
+  display: grid;
+  gap: 2rem;
+}
+
+.systemSection {
+  > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  > summary h3 {
+    font-size: 1.1rem;
+  }
+
+  &[open] > summary {
+    margin-bottom: 1rem;
+  }
+
+  &:not([open]) > summary {
+    margin-bottom: 0;
+  }
+}
+
+.systemCount {
+    display: inline-grid;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    place-items: center;
+    border-radius: 99px;
+    color: #b7c1e2;
+    background: #ffffff12;
+    font-size: 0.75rem;
+}
+
+.disclosureArrow {
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-left: 0.15rem;
+  border-right: 2px solid #aab2ca;
+  border-bottom: 2px solid #aab2ca;
+  transform: rotate(45deg);
+  transition: transform 150ms ease;
+
+}
+
+.systemSection:not([open]) .disclosureArrow {
+  transform: rotate(-45deg);
+}
+
+.gameGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  align-items: start;
+  gap: 1rem;
+}
+
+.gameCard {
+  display: grid;
+  grid-template-columns: 106px minmax(0, 1fr);
+  min-height: 158px;
+  overflow: hidden;
+  border: 1px solid #ffffff10;
+  border-radius: 0.9rem;
+  background: #202636;
+}
+
+.cover {
+  position: relative;
+  display: grid;
+  width: 106px;
+  height: 158px;
+  place-items: center;
+  overflow: hidden;
+  color: #8792b1;
+  background: linear-gradient(145deg, #333e5b, #202636);
+  font-size: 1.8rem;
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.gameDetails {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1rem;
+
+  h4 {
+    overflow-wrap: anywhere;
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+}
+
+.gameTitleRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+
+  h4 {
+    margin: 0;
+    min-width: 0;
+  }
+}
+
+.gameActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.35rem;
+}
+
+.editButton {
+  flex: 0 0 auto;
+  border: 1px solid #8797ff55;
+  border-radius: 0.55rem;
+  padding: 0.3rem 0.55rem;
+  color: #c4ccff;
+  background: #596ff022;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+
+  &:hover:not(:disabled) {
+    border-color: #9daaff;
+    background: #596ff044;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.completeButton {
+  flex: 0 0 auto;
+  border: 1px solid #35b98155;
+  border-radius: 0.55rem;
+  padding: 0.3rem 0.5rem;
+  color: #b7f5d6;
+  background: #15805122;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  transition: background 150ms ease, border-color 150ms ease;
+
+  &:hover {
+    border-color: #54d89b;
+    background: #15805144;
+  }
+}
+
+.gameComments {
+  margin-top: auto;
+  padding-top: 0.7rem;
+  color: #aab2ca;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.gameMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+  color: #aab2ca;
+  font-size: 0.75rem;
+
+  span {
+    border-radius: 99px;
+    padding: 0.22rem 0.5rem;
+    background: #ffffff0d;
+  }
+}
+
+.emptyState {
+  border: 1px dashed #ffffff24;
+  border-radius: 0.8rem;
+  padding: 1.5rem;
+  color: #aab2ca;
+  text-align: center;
+}
+
+.gameForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  > label {
+    display: grid;
+    gap: 0.45rem;
+    color: #bdc5da;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  input:not([type="checkbox"]),
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid #ffffff20;
+    border-radius: 0.7rem;
+    padding: 0.8rem 0.9rem;
+    color: #f4f6ff;
+    background: #10141f;
+    font: inherit;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .commentsField {
+    grid-column: 1 / -1;
+  }
+
+  .checkbox {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  > button {
+    justify-self: start;
+  }
+}
+
+.floatingAddButton {
+  position: fixed;
+  z-index: 10;
+  right: clamp(1.25rem, 4vw, 3rem);
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid #ffffff35;
+  border-radius: 999px;
+  padding: 0.65rem 1.25rem 0.65rem 0.7rem;
+  color: #fff;
+  background: linear-gradient(135deg, #7184ff, #5266df);
+  box-shadow: 0 12px 32px #0008, 0 0 0 4px #7184ff1c;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #8292ff, #6377f0);
+    box-shadow: 0 16px 38px #0009, 0 0 0 5px #7184ff2b;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #dfe4ff;
+    outline-offset: 4px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.7);
+    opacity: 0.7;
+  }
+}
+
+.floatingAddIcon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid #ffffff55;
+  border-radius: 50%;
+  background: #ffffff20;
+  font-size: 1.65rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.dialogBackdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: #080b12cc;
+  backdrop-filter: blur(7px);
+}
+
+.addDialog {
+  width: min(100%, 680px);
+  max-height: min(90vh, 850px);
+  overflow-y: auto;
+  border: 1px solid #ffffff20;
+  border-radius: 1.2rem;
+  padding: 1.6rem;
+  color: #f4f6ff;
+  background:
+    radial-gradient(ellipse at 100% 0%, #3b4d8b30, transparent 22rem),
+    #191e2b;
+  box-shadow: 0 28px 90px #0009;
+}
+
+.editDialog {
+  width: min(100%, 590px);
+  max-height: min(90vh, 850px);
+  overflow-y: auto;
+  border: 1px solid #ffffff20;
+  border-radius: 1.2rem;
+  padding: 1.6rem;
+  color: #f4f6ff;
+  background: #191e2b;
+  box-shadow: 0 28px 90px #0009;
+}
+
+.dialogHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+
+  h2 {
+    margin-top: 0.25rem;
+    font-size: 1.6rem;
+  }
+}
+
+.closeButton {
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  place-items: center;
+  border: 1px solid #ffffff1a;
+  border-radius: 50%;
+  color: #c7cee2;
+  background: #ffffff0c;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #ffffff1a;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.editForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  > label {
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    color: #bdc5da;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  input:not([type="checkbox"]),
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid #ffffff20;
+    border-radius: 0.7rem;
+    padding: 0.8rem 0.9rem;
+    color: #f4f6ff;
+    background: #10141f;
+    font: inherit;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.editCheckbox,
+.editComments,
+.coverUpload,
+.dialogActions {
+  grid-column: 1 / -1;
+}
+
+.editForm .coverUpload {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem 1rem;
+  border: 1px dashed #ffffff24;
+  border-radius: 0.8rem;
+  padding: 0.9rem;
+
+  input {
+    grid-column: 1 / -1;
+    width: 100%;
+    color: #c7cee2;
+  }
+
+  span {
+    color: #929cb5;
+    font-size: 0.78rem;
+    font-weight: 400;
+  }
+
+  img {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 74px;
+    height: 96px;
+    border-radius: 0.45rem;
+    background: #10141f;
+    object-fit: contain;
+  }
+}
+
+.editForm .editCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+
+  input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: #7184ff;
+  }
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.3rem;
+}
+
+.cancelButton {
+  border: 1px solid #ffffff24;
+  border-radius: 0.75rem;
+  padding: 0.8rem 1.1rem;
+  color: #c7cee2;
+  background: #ffffff0a;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #ffffff14;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.dialogError {
+  margin: 0 0 1rem;
+  border-radius: 0.7rem;
+  padding: 0.8rem 1rem;
+  color: #ffd4d4;
+  background: #7b2f3c;
+  overflow-wrap: anywhere;
+}
+
+.error,
+.notice {
+  margin: -1.4rem 0 1.6rem;
+  border-radius: 0.7rem;
+  padding: 0.8rem 1rem;
+}
+
+.error {
+  color: #ffd4d4;
+  background: #7b2f3c;
+}
+
+.notice {
+  color: #d5ffe8;
+  background: #175b3e;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 650px) {
+  .page {
+    padding: 2rem 1rem;
+  }
+
+  .hero,
+  .sectionHeading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pathForm {
+    flex-direction: column;
+  }
+
+  .gameForm {
+    grid-template-columns: 1fr;
+  }
+
+  .editForm {
+    grid-template-columns: 1fr;
+  }
+
+  .editForm .coverUpload {
+    grid-template-columns: 1fr;
+
+    input,
+    img {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+
+  .addDialog,
+  .editDialog {
+    padding: 1.25rem;
+  }
+
+  .floatingAddButton {
+    right: 1rem;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .gameForm .dialogActions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .dialogBackdrop {
+    align-items: start;
+    padding: 1rem;
+  }
+}

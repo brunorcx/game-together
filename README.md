@@ -1,5 +1,17 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Backlog
+
+The Backlog page is available at `/backlog`. It reads and updates a plain-text file selected on the page; its path is saved locally in `.backlog-config.json`. Use the floating **Add a game** button to open the game form. Games are grouped under system headings, for example:
+
+```text
+--- Nintendo Switch ---
+Example Game (4?) -- Action
+Another Game (?) -- RPG
+```
+
+The optional `?` after a player count indicates uncertain multiplayer support. Add comments on their own line below a game with `Comments: Your note here`. Use the **Edit** button on a game card to update its name, system, player count, comments, or upload a custom cover. Uploaded covers are resized in the browser to 1 MB or less. Edits are written back to the selected text file while preserving the game genre. Use **Complete game** to open the Score form with the game details filled in; the score is saved and the game is removed from the backlog only after a successful score save. Covers for removed games are cleaned up, while existing covers are preserved when an automatic cover search finds no replacement.
+
 ## Getting Started
 
 First, run the development server:

@@ -3,6 +3,12 @@
 import React, { useState } from "react";
 import styles from "./score.module.scss";
 
+interface BacklogCompletion {
+  system: string;
+  name: string;
+  occurrence: number;
+}
+
 interface ScoreForm {
   name: string;
   genre: string;
@@ -40,12 +46,15 @@ const NEW_PLATFORM_OPTION = "__new__";
 interface ScoreProps {
   initialFilePath: string | null;
   initialPlatforms: string[];
+  initialGame: Pick<ScoreForm, "name" | "platform" | "genre">;
+  backlogCompletion: BacklogCompletion | null;
 }
 
-export default function Score({ initialFilePath, initialPlatforms }: ScoreProps) {
-  const [form, setForm] = useState<ScoreForm>(initialForm);
+export default function Score({ initialFilePath, initialPlatforms, initialGame, backlogCompletion }: ScoreProps) {
+  const [form, setForm] = useState<ScoreForm>(() => ({ ...initialForm, ...initialGame }));
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [submissionMessage, setSubmissionMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
   const [filePath, setFilePath] = useState<string | null>(initialFilePath);
   const [pathInput, setPathInput] = useState(initialFilePath || "");
@@ -53,7 +62,13 @@ export default function Score({ initialFilePath, initialPlatforms }: ScoreProps)
   const [pathMessage, setPathMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
   const [platforms, setPlatforms] = useState<string[]>(initialPlatforms);
-  const [platformMode, setPlatformMode] = useState<"select" | "new">(initialPlatforms.length ? "select" : "new");
+  const [platformMode, setPlatformMode] = useState<"select" | "new">(
+    initialGame.platform && !initialPlatforms.includes(initialGame.platform)
+      ? "new"
+      : initialPlatforms.length
+        ? "select"
+        : "new",
+  );
 
   const refreshPlatforms = async () => {
     try {
@@ -111,27 +126,49 @@ export default function Score({ initialFilePath, initialPlatforms }: ScoreProps)
     e.preventDefault();
     setLoading(true);
     setSaved(false);
+    setSubmissionMessage(null);
 
     try {
       const res = await fetch("/api/games", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          backlogCompletion: backlogCompletion
+            ? {
+                backlogSystem: backlogCompletion.system,
+                backlogName: backlogCompletion.name,
+                backlogOccurrence: backlogCompletion.occurrence,
+              }
+            : undefined,
+        }),
       });
+      const data = await res.json();
 
-      if (res.ok) {
+      if (res.ok && data.success) {
         setSaved(true);
+        setSubmissionMessage({
+          text: data.coverWarning
+            ? `Score saved and backlog item removed, but cover cleanup failed: ${data.coverWarning}`
+            : backlogCompletion
+              ? "Score saved. The game and its cover were removed from the backlog."
+              : "Salvo com sucesso!",
+          isError: Boolean(data.coverWarning),
+        });
         setForm(initialForm);
         setPlatformMode(platforms.length ? "select" : "new");
         await refreshPlatforms();
       } else {
-        console.error(await res.json());
+        setSubmissionMessage({ text: data.error || "Não foi possível salvar o jogo.", isError: true });
       }
-    } catch (error) {
-      console.error("Submit error", error);
+    } catch (submitError) {
+      setSubmissionMessage({
+        text: submitError instanceof Error ? submitError.message : "Não foi possível salvar o jogo.",
+        isError: true,
+      });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -156,6 +193,11 @@ export default function Score({ initialFilePath, initialPlatforms }: ScoreProps)
       </form>
 
       <h2>Adicionar Jogo</h2>
+      {backlogCompletion && (
+        <p className={styles.completionNotice}>
+          Complete this backlog game by saving its score. It will be removed from the backlog after the score is saved.
+        </p>
+      )}
 
       {!filePath ? (
         <p>Configure o caminho do arquivo .txt acima antes de adicionar um jogo.</p>
@@ -229,7 +271,12 @@ export default function Score({ initialFilePath, initialPlatforms }: ScoreProps)
             {loading ? "Salvando..." : "Salvar"}
           </button>
 
-          {saved && <div className={styles.successMessage}>Salvo com sucesso!</div>}
+          {submissionMessage && (
+            <div className={submissionMessage.isError ? styles.errorMessage : styles.successMessage} role={submissionMessage.isError ? "alert" : "status"}>
+              {submissionMessage.text}
+            </div>
+          )}
+          {saved && !submissionMessage && <div className={styles.successMessage}>Salvo com sucesso!</div>}
         </form>
       )}
     </div>

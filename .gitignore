@@ -43,3 +43,5 @@ node_modules
 
 # local scores file path config
 .scores-config.json
+.backlog-config.json
+.backlog-covers/
